@@ -1,5 +1,5 @@
 ---
-title: Neural
+title: Neurocial
 emoji: 🖼
 colorFrom: purple
 colorTo: red
