@@ -2,6 +2,7 @@ import gradio as gr
 import numpy as np
 import random
 # import spaces #[uncomment to use ZeroGPU]
+from gradio_client import Client
 from diffusers import DiffusionPipeline
 import torch
 
@@ -13,12 +14,26 @@ if torch.cuda.is_available():
 else:
     torch_dtype = torch.float32
 
+client = Client("ronak-wani/Neurocial")
 pipe = DiffusionPipeline.from_pretrained(model_repo_id, torch_dtype=torch_dtype)
 pipe = pipe.to(device)
 
 MAX_SEED = np.iinfo(np.int32).max
 MAX_IMAGE_SIZE = 1024
 
+
+result = client.predict(
+		prompt="Hello!!",
+		negative_prompt="Hello!!",
+		seed=0,
+		randomize_seed=True,
+		width=1024,
+		height=1024,
+		guidance_scale=0,
+		num_inference_steps=2,
+		api_name="/infer"
+)
+print(result)
 
 # @spaces.GPU #[uncomment to use ZeroGPU]
 def infer(prompt, negative_prompt, seed, randomize_seed, width, height, guidance_scale, num_inference_steps,
@@ -56,9 +71,7 @@ css = """
 
 with gr.Blocks(css=css) as demo:
     with gr.Column(elem_id="col-container"):
-        gr.Markdown(f"""
-        # Text-to-Image Gradio Template
-        """)
+        gr.Markdown(f""" Neurocial Text-to-Image""")
 
         with gr.Row():
             prompt = gr.Text(
@@ -136,4 +149,4 @@ with gr.Blocks(css=css) as demo:
         outputs=[result, seed]
     )
 
-demo.queue().launch()
+demo.queue().launch(share=True)
